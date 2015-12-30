@@ -70,25 +70,8 @@ def printToCSV(VideoInfo):
   f.write(VideoInfo + "\n")
 
 if __name__ == "__main__":
-  #Set the defaul channel list
-  channels = ['TrueTriz','MissesMae','giancarloparimango11','Realm Games',
-              'MassiveG','Open World Games','LanguageCraft FR - Bill Silverlight'
-              'Bashurverse','BurtGasm', 'Anima','WikiGameGuides','BlastphamousHD Gaming',
-              'Blitzwinger','Simon Desue','JuegaGerman','ApeCrime','Vegas','GAMINGwithMOLT',
-              'T3ddy','coisadenerd','Sitr0x','Ali-A','Vikkstar123HD - Minecraft','SSSniperWolf',
-              'MasterOv Gaming Channel','CorridorDigital','MatthewPatrick13','Screen Team',
-              'SurreaIPower','Elly Awesome','jahovaswitniss','Screen Team','SurreaIPower',
-              'Elly Awesome','jahovaswitniss','TwoSyncGAMES','Annoying Orange','nickatnyte',
-              'TradeChat','BAHMLounge','Epic Meal Time','kwingsletsplays','AviatorGamez',
-              'KSic Games','iamfallfromgrace','Katie Wilson','St3pNy','Tobuscus','omgurheadsgone',
-              'Clash On Gan - Clash of Clans','muyskerm','AppFind','Cib','Sonny Daniel Gaming',
-              'TmarTn2','Godson - Clash of Clans','Wiggy','NGT Mobile Gaming','mcsportzhawk',
-              'lTheMasterOfDooMl','FireRockerzstudios','BjCanDive','8-Bit Eric','Velberan',
-              'Mateiformiga','Generikb','mcsportzhawk','Superjombombo2','TheGameHuntah',
-              'FireRockerzstudios','Wolfguys7 - Game of War Fire Age','phonecatss',
-              'TouchGameplay','Bootramp Boom Beach - Clash Of Clans & More','MessYourself','MasterOv',
-              'LittleLizardGaming','MattHDGamer','Olli43','FearRaiser','GameRiot'
-              ]
+  #Add default channels to search for here
+  channels = []
 
   argparser.add_argument("--q", help="Search term")
   argparser.add_argument("--order", help="viewCount, relevance, rating, date", default="date")
