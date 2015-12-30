@@ -1,0 +1,104 @@
+#!/usr/bin/python
+'''
+This is a modification of an exmaple script provided from: https://developers.google.com/youtube/v3/docs/search/list
+
+I've added: 
+  1. Simple file writer to output data to a CSV file
+  2. The "order" command line argument
+  3. Defaul channel list
+  4. Videos.list method to get the video resource for each videoId returned from the search 
+  5. Video statistics from the vidoes resource
+  6. Removed default query in argparser
+'''
+
+import os
+import sys
+from apiclient.discovery import build
+from apiclient.errors import HttpError
+from oauth2client.tools import argparser
+
+#Update Dev Key below
+DEVELOPER_KEY = "YOUR DEV KEY"
+YOUTUBE_API_SERVICE_NAME = "youtube"
+YOUTUBE_API_VERSION = "v3"
+
+def youtube_search(options):
+  youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
+    developerKey=DEVELOPER_KEY)
+
+  # Call the search.list method to retrieve video ids
+
+  search_response = youtube.search().list(
+    order=options.order,
+    q=options.q,
+    type="video",
+    part="id,snippet",
+    maxResults=options.max_results
+  ).execute()
+
+  search_videos = []
+
+  # Add each result to the appropriate list, and then display the lists of
+  for search_result in search_response.get("items", []):
+    search_videos.append(search_result["id"]["videoId"])
+  
+  video_ids= "," .join(search_videos)
+
+  # Call the videos.list method to retrieve stats for each video.
+  video_response = youtube.videos().list(
+        part="snippet,statistics",
+        id=video_ids
+      ).execute()
+
+  videos = []
+
+  # Add each result to the list, and then display the list of matching videos.
+  for video_result in video_response.get("items", []):
+    videos.append("%s,%s, https://www.youtube.com/watch?v=%s,%s" % (video_result["snippet"]["channelTitle"],video_result["snippet"]["title"].replace(',',' '),
+                              video_result["id"],
+                              video_result["statistics"]["viewCount"]))
+
+  print "Videos:\n", ("\n".join(videos)).encode('utf-8'), "\n"
+  printToCSV(("\n" .join(videos)).encode('utf-8'))
+
+#simple function to print to txt file
+def printToCSV(VideoInfo):
+  f = open(os.path.dirname(os.path.realpath(__file__)) + '/Influencer.csv','a')
+  f.write(VideoInfo + "\n")
+
+if __name__ == "__main__":
+  #Set the defaul channel list
+  channels = ['TrueTriz','MissesMae','giancarloparimango11','Realm Games',
+              'MassiveG','Open World Games','LanguageCraft FR - Bill Silverlight'
+              'Bashurverse','BurtGasm', 'Anima','WikiGameGuides','BlastphamousHD Gaming',
+              'Blitzwinger','Simon Desue','JuegaGerman','ApeCrime','Vegas','GAMINGwithMOLT',
+              'T3ddy','coisadenerd','Sitr0x','Ali-A','Vikkstar123HD - Minecraft','SSSniperWolf',
+              'MasterOv Gaming Channel','CorridorDigital','MatthewPatrick13','Screen Team',
+              'SurreaIPower','Elly Awesome','jahovaswitniss','Screen Team','SurreaIPower',
+              'Elly Awesome','jahovaswitniss','TwoSyncGAMES','Annoying Orange','nickatnyte',
+              'TradeChat','BAHMLounge','Epic Meal Time','kwingsletsplays','AviatorGamez',
+              'KSic Games','iamfallfromgrace','Katie Wilson','St3pNy','Tobuscus','omgurheadsgone',
+              'Clash On Gan - Clash of Clans','muyskerm','AppFind','Cib','Sonny Daniel Gaming',
+              'TmarTn2','Godson - Clash of Clans','Wiggy','NGT Mobile Gaming','mcsportzhawk',
+              'lTheMasterOfDooMl','FireRockerzstudios','BjCanDive','8-Bit Eric','Velberan',
+              'Mateiformiga','Generikb','mcsportzhawk','Superjombombo2','TheGameHuntah',
+              'FireRockerzstudios','Wolfguys7 - Game of War Fire Age','phonecatss',
+              'TouchGameplay','Bootramp Boom Beach - Clash Of Clans & More','MessYourself','MasterOv',
+              'LittleLizardGaming','MattHDGamer','Olli43','FearRaiser','GameRiot'
+              ]
+
+  argparser.add_argument("--q", help="Search term")
+  argparser.add_argument("--order", help="viewCount, relevance, rating, date", default="date")
+  argparser.add_argument("--max-results", help="Max results", default=25)
+  args = argparser.parse_args()
+
+  try:
+    if args.q !=None:
+      youtube_search(args)
+    else:
+      for channel in channels:
+        args.q= channel
+        youtube_search(args)
+
+  except HttpError, e:
+    print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
