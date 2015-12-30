@@ -54,9 +54,12 @@ def youtube_search(options):
 
   # Add each result to the list, and then display the list of matching videos.
   for video_result in video_response.get("items", []):
-    videos.append("%s,%s, https://www.youtube.com/watch?v=%s,%s" % (video_result["snippet"]["channelTitle"],video_result["snippet"]["title"].replace(',',' '),
+    videos.append("%s,%s, https://www.youtube.com/watch?v=%s,%s" % 
+                              (video_result["snippet"]["channelTitle"],
+                              video_result["snippet"]["title"].replace(',',' '),
                               video_result["id"],
-                              video_result["statistics"]["viewCount"]))
+                              video_result["statistics"]["viewCount"])
+                              )
 
   print "Videos:\n", ("\n".join(videos)).encode('utf-8'), "\n"
   printToCSV(("\n" .join(videos)).encode('utf-8'))
